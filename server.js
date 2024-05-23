@@ -14,6 +14,7 @@ const pool = new Pool(
     password: 'Password24',
     host: 'localhost',
     database: 'workforce_db',
+    port: 5432,
   },
   console.log(`Connected to the workforce_db.`)
 );
