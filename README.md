@@ -1,57 +1,121 @@
-# Working-Force
+# Working Force
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Thank you for choosing the SVG Maker App! This tool helps you create stunning and customizable SVG graphics with ease. Simply follow the prompts, and you'll have beautiful SVG designs ready in no time.
+## Welcome to Working Force
+Welcome to Working Force this application is a command-line application designed to manage a company's employee database. It helps administrators keep track of employees, managers, departments, and roles by providing a series of prompts that guide the user through various tasks. This application is built using Node.js, Inquirer, and PostgreSQL.
 
-Let's get started and unleash your creativity! If you have any questions, check the contact info in the Questions section.
-
-Happy designing! 🎨
 
 ## Table of Contents
-- [Description](#description)
+- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Tests](#tests)
-- [Contributing](#contributing)
-- [Links](#links)
+- [Database Schemas](#database-schema)
+- [Contributions](#contributions)
+- [Technologies](#technologies)
+- [Link](#link)
 - [Questions](#questions)
 - [License](#license)
 
-## Description
+## Features
+- **Add Employees**: Enter details to add new employees.
+- **View Employees**: Display a list of all employees.
+- **Update Employee Roles**: Change the role of an existing employee.
+- **Add Departments**: Enter details to add new departments.
+- **Add Roles**: Enter details to add new roles.
+- **View Departments**: Display a list of all departments.
+- **View Roles**: Display a list of all roles.
+- **Delete Employees, Roles, Departments**: Remove entries from the database.
 
-
+### Demo
 ![image](https://github.com/DRX-88/Working-Force/assets/162182740/7e21b016-0f54-4319-8fb7-cd66d1c8c4e6)
 
 ## Installation
-Please run the following command to install the required dependencies:
-```bash
-npm install
+
+1. Clone the repository to your local machine:
+    ```bash
+    npm install
+    ```
+2. Sign into your postgres using:
+    ```bash
+    psql -U postgres
+    ```
+3. Create the database:
+    ```bash
+    \i ./db/schema.sql
+    ```
+4. Seed the database:
+    ```bash
+    \i ./db/schema.sql
+    ```
+Make sure to also put in your Postgres username and password located in the server.js file on server.js:13:
+
+```javascript
+module.exports = {
+    user: 'your-username',
+    password: 'your-password',
+    host: 'localhost',
+    database: 'your-database-name',
+    port: 5432,
+};
 ```
 
 ## Usage
-Please run the following command to start the application:
-```bash
-node index.js
-```
 
-## Tests
-Please run the following command to execute the tests:
-```bash
-npm test
-```
+1. Start the application by running:
+    ```bash
+    npm start
+    ```
+2. Follow the prompts to interact with the employee tracker:
+    - Select an option from the main menu.
+    - Enter the required information when prompted.
 
-## Contributing
-Feel free to contribute to this project by following these steps:
+## Database Schema
+
+- **Departments Table**: Contains department details.
+    - `id`: SERIAL PRIMARY KEY
+    - `name`: VARCHAR(30)
+    
+- **Roles Table**: Contains role details.
+    - `id`: SERIAL PRIMARY KEY
+    - `title`: VARCHAR(30) 
+    - `salary`: DECIMAL L
+    - `department_id`: INTEGER REFERENCES department(id)
+
+- **Employees Table**: Contains employee details.
+    - `id`: SERIAL PRIMARY KEY
+    - `first_name`: VARCHAR(30) 
+    - `last_name`: VARCHAR(30) 
+    - `role_id`: INTEGER REFERENCES role(id)
+    - `manager_id`: INTEGER REFERENCES employee(id)
+
+## Contributions
+
+Contributions are welcome! Please follow these steps:
+
 1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes.
-4. Commit your changes (`git commit -m 'Add new feature'`).
-5. Push to the branch (`git push origin feature-branch`).
-6. Open a Pull Request.
+2. Create a new branch:
+    ```bash
+    git checkout -b feature-branch
+    ```
+3. Make your changes and commit them:
+    ```bash
+    git commit -m 'Add new feature'
+    ```
+4. Push to the branch:
+    ```bash
+    git push origin feature-branch
+    ```
+5. Open a pull request.
 
-## Links
-[Video Tutorial](https://drive.google.com/file/d/1nJcLjg7t46LwZCRpDppbcGq6FBPxY6HN/view?usp=drive_link)
+## Technologies
+
+- [Node.js](https://nodejs.org/)
+- [Inquirer](https://www.npmjs.com/package/inquirer)
+- [PostgreSQL](https://www.postgresql.org/)
+
+
+## Link
 [Github Repo](https://github.com/DRX-88/SVG-Maker)
 
 ## Questions
