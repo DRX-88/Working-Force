@@ -10,8 +10,8 @@ app.use(express.json());
 
 const pool = new Pool(
   {
-    user: '',
-    password: '',
+    user: 'postgres',
+    password: 'Password24',
     host: 'localhost',
     database: 'workforce_db',
   },
@@ -135,6 +135,280 @@ app.delete('/api/delete-department', (req, res) => {
     });
     }     
 );
+
+const questions = [
+  {
+    type: 'list',
+    name: 'action',
+    message: 'What would you like to do?',
+    choices: [
+      'View All Departments',
+      'View All Roles',
+      'View All Employees',
+      'Add Department',
+      'Add Role',
+      'Add Employee',
+      'Update Employee Role',
+      'Delete Employee',
+      'Delete Role',
+      'Delete Department',
+      'Exit'
+    ]
+  }
+];
+
+const mainMenu = () => {
+    inquirer.prompt(questions).then((answers) => {
+        switch (answers.action) {
+        case 'View All Departments':
+            viewDepartments();
+            break;
+        case 'View All Roles':
+            viewRoles();
+            break;
+        case 'View All Employees':
+            viewEmployees();
+            break;
+        case 'Add Department':
+            addDepartment();
+            break;
+        case 'Add Role':
+            addRole();
+            break;
+        case 'Add Employee':
+            addEmployee();
+            break;
+        case 'Update Employee Role':
+            updateEmployeeRole();
+            break;
+        case 'Delete Employee':
+            deleteEmployee();
+            break;
+        case 'Delete Role':
+            deleteRole();
+            break;
+        case 'Delete Department':
+            deleteDepartment();
+            break;
+        case 'Exit':
+            pool.end();
+            break;
+        }
+    });
+    }
+
+const viewDepartments = () => {
+    pool.query('SELECT * FROM department', (err, result) => {
+        if (err) {
+        console.error(err);
+        return;
+        }
+        console.table(result.rows);
+        mainMenu();
+    });
+    }
+
+const viewRoles = () => { 
+    pool.query('SELECT * FROM role', (err, result) => {
+        if (err) {
+        console.error(err);
+        return;
+        }
+        console.table(result.rows);
+        mainMenu();
+    });
+    }
+
+const viewEmployees = () => {
+    pool.query('SELECT * FROM employee', (err, result) => {
+        if (err) {
+        console.error(err);
+        return;
+        }
+        console.table(result.rows);
+        mainMenu();
+    });
+    }
+
+const addDepartment = () => {
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'name',
+        message: 'Enter the name of the department:'
+        }
+    ]).then((answers) => {
+        pool.query('INSERT INTO department (name) VALUES ($1)', [answers.name], (err, result) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('Department added successfully.');
+        mainMenu();
+        });
+    });
+    }
+
+const addRole = () => { 
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'title',
+        message: 'Enter the title of the role:'
+        },
+        {
+        type: 'input',
+        name: 'salary',
+        message: 'Enter the salary of the role:'
+        },
+        {
+        type: 'input',
+        name: 'department_id',
+        message: 'Enter the department ID of the role:'
+        }
+    ]).then((answers) => {
+        pool.query('INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)', [answers.title, answers.salary, answers.department_id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('Role added successfully.');
+        mainMenu();
+        });
+    });
+    }   
+
+const addEmployee = () => {
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'first_name',
+        message: 'Enter the first name of the employee:'
+        },
+        {
+        type: 'input',
+        name: 'last_name',
+        message: 'Enter the last name of the employee:'
+        },
+        {
+        type: 'input',
+        name: 'role_id',
+        message: 'Enter the role ID of the employee:'
+        },
+        {
+        type: 'input',
+        name: 'manager_id',
+        message: 'Enter the manager ID of the employee:'
+        }
+    ]).then((answers) => {
+        pool.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)', [answers.first_name, answers.last_name, answers.role_id, answers.manager_id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('Employee added successfully.');
+        mainMenu();
+        });
+    });
+    }
+
+const updateEmployeeRole = () => {
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'id',
+        message: 'Enter the ID of the employee:'
+        },
+        {
+        type: 'input',
+        name: 'first_name',
+        message: 'Enter the first name of the employee:'
+        },
+        {
+        type: 'input',
+        name: 'last_name',
+        message: 'Enter the last name of the employee:'
+        },
+        {
+        type: 'input',
+        name: 'role_id',
+        message: 'Enter the role ID of the employee:'
+        },
+        {
+        type: 'input',
+        name: 'manager_id',
+        message: 'Enter the manager ID of the employee:'
+        }
+    ]).then((answers) => {
+        pool.query('UPDATE employee SET first_name = $1, last_name = $2, role_id = $3, manager_id = $4 WHERE id = $5', [answers.first_name, answers.last_name, answers.role_id, answers.manager_id, answers.id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('Employee updated successfully.');
+        mainMenu();
+        });
+    });
+    }   
+
+const deleteEmployee = () => {  
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'id',
+        message: 'Enter the ID of the employee:'
+        }
+    ]).then((answers) => {
+        pool.query('DELETE FROM employee WHERE id = $1', [answers.id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('Employee deleted successfully.');
+        mainMenu();
+        });
+    });
+    }
+
+const deleteRole = () => {
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'id',
+        message: 'Enter the ID of the role:'
+        }
+    ]).then((answers) => {
+        pool.query('DELETE FROM role WHERE id = $1', [answers.id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('Role deleted successfully.');
+        mainMenu();
+        });
+    });
+    }
+
+const deleteDepartment = () => {
+    inquirer.prompt([
+        {
+        type: 'input',
+        name: 'id',
+        message: 'Enter the ID of the department:'
+        }
+    ]).then((answers) => {
+        pool.query('DELETE FROM department WHERE id = $1', [answers.id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log('Department deleted successfully.');
+        mainMenu();
+        });
+    });
+    }
+
+mainMenu();
 
 
 
